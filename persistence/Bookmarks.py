@@ -6,10 +6,23 @@ import ConfigParser
 #import array
 import hashlib
 import Jumble
+import os.path
 
 class Bookmarks:
+
+    instance = None
+
+    def __new__(cls, *args, **kargs):
+        print cls
+        if cls.instance is None:
+            cls.instance = object.__new__(cls, *args, **kargs)
+        return cls.instance
+
     def __init__(self, path):
+        print self
         self.appdata = path+'/bookmarks.ini'
+        if not os.path.exists(self.appdata):
+            open(self.appdata, 'w').close()
         self.hash = self.md5File()
         self.jumble = Jumble.Jumble()
         
