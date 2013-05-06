@@ -13,8 +13,6 @@ from os import path#, environ
 #import persistence
 from persistence import *
 
-__author__="Pablo Bangueses"
-
 
 class ConnectionsEditor:
 

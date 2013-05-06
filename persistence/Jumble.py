@@ -33,6 +33,7 @@ class Jumble:
      @return string
     """
     def decrypt(self, source, key = None):
+        print source
         self.errors = []
 
         if key == None:

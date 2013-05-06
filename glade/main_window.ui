@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!--Generated with glade3 3.4.5 on Wed Jul 18 20:57:05 2012 -->
+<!--Generated with glade3 3.4.5 on Mon Sep 10 00:13:16 2012 -->
 <interface>
   <object class="GtkUIManager" id="uimanager1">
     <child>
@@ -8,6 +8,18 @@
           <object class="GtkAction" id="menuitem_file">
             <property name="name">menuitem_file</property>
             <property name="label" translatable="yes">_Archivo</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToggleAction" id="menu_file_connect1">
+            <property name="name">menu_file_connect1</property>
+            <property name="label" translatable="yes">Connect Left Side</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToggleAction" id="menu_file_connect2">
+            <property name="name">menu_file_connect2</property>
+            <property name="label" translatable="yes">Connect Right Side</property>
           </object>
         </child>
         <child>
@@ -26,7 +38,12 @@
           <object class="GtkAction" id="menu_tools_connections">
             <property name="name">menu_tools_connections</property>
             <property name="label" translatable="yes">Manage Connection...</property>
-            <signal handler="openConnectionsEditor" name="activate"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="menu_tools_preferences">
+            <property name="stock_id" translatable="yes">gtk-preferences</property>
+            <property name="name">menu_tools_preferences</property>
           </object>
         </child>
         <child>
@@ -65,11 +82,15 @@
     <ui>
       <menubar name="menubar">
         <menu action="menuitem_file">
+          <menuitem action="menu_file_connect1"/>
+          <menuitem action="menu_file_connect2"/>
           <separator/>
           <menuitem action="menu_file_quit"/>
         </menu>
         <menu action="menuitem_tools">
           <menuitem action="menu_tools_connections"/>
+          <separator/>
+          <menuitem action="menu_tools_preferences"/>
         </menu>
         <menu action="menuitem_help">
           <menuitem action="menu_help_help"/>
@@ -123,6 +144,28 @@
                           <placeholder/>
                         </child>
                         <child>
+                          <object class="GtkComboBox" id="schemas_combo1">
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="y_options"/>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="schemas_combo2">
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="right_attach">3</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="y_options"/>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkHBox" id="hbox2">
                             <property name="visible">True</property>
                             <child>
@@ -141,6 +184,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip-text" translatable="yes">Connect</property>
                                 <property name="relief">GTK_RELIEF_NONE</property>
                                 <child>
                                   <object class="GtkImage" id="connectimage2">
@@ -180,6 +224,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip-text" translatable="yes">Connect</property>
                                 <property name="use_action_appearance">False</property>
                                 <property name="relief">GTK_RELIEF_NONE</property>
                                 <child>
@@ -196,28 +241,6 @@
                             </child>
                           </object>
                           <packing>
-                            <property name="y_options"/>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBox" id="tables2">
-                            <property name="visible">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="right_attach">3</property>
-                            <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
-                            <property name="y_options"/>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBox" id="tables1">
-                            <property name="visible">True</property>
-                          </object>
-                          <packing>
-                            <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
                             <property name="y_options"/>
                           </packing>
                         </child>
@@ -238,16 +261,43 @@
                       <object class="GtkScrolledWindow" id="scrolledwindow1">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
+                        <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
                         <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
                         <child>
-                          <object class="GtkViewport" id="viewport2">
+                          <object class="GtkViewport" id="viewport1">
                             <property name="visible">True</property>
                             <property name="resize_mode">GTK_RESIZE_QUEUE</property>
                             <child>
-                              <object class="GtkTreeView" id="treeview1">
+                              <object class="GtkHBox" id="hbox3">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment3">
+                                    <property name="visible">True</property>
+                                    <child>
+                                      <object class="GtkTreeView" id="treeview1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment4">
+                                    <property name="visible">True</property>
+                                    <child>
+                                      <object class="GtkTreeView" id="treeview2">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
                             </child>
                           </object>
