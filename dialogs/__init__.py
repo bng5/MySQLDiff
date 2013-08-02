@@ -1,1 +1,1 @@
-__all__ = ["pingDialog"]
+__all__ = ["pingDialog", "connectDialog"]
