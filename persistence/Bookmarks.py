@@ -21,17 +21,17 @@ class Bookmarks(gtk.ListStore):
     #        return cls.instance
 
     def __init__(self, path):
-
-        self.appdata = path+'/bookmarks.ini'
+        print 'Bookmarks'
+        self.filename = path+'/bookmarks.ini'
         gtk.ListStore.__init__(self, gobject.TYPE_STRING, gobject.TYPE_PYOBJECT, gobject.TYPE_BOOLEAN)
-        if not os.path.exists(self.appdata):
-            open(self.appdata, 'w').close()
+        if not os.path.exists(self.filename):
+            open(self.filename, 'w').close()
         self.hash = self.md5File()
         self.jumble = Jumble.Jumble()
-        
+    
     def load(self):
         cp = ConfigParser.ConfigParser()
-        cp.read(self.appdata)
+        cp.read(self.filename)
         for name in cp.sections():
             data = {}
             for opt in cp.items(name):
@@ -46,7 +46,7 @@ class Bookmarks(gtk.ListStore):
 
     def getBookmarks(self):
         cp = ConfigParser.ConfigParser()
-        cp.read(self.appdata)
+        cp.read(self.filename)
         data = {}
         for name in cp.sections():
             data[name] = {}
@@ -59,7 +59,7 @@ class Bookmarks(gtk.ListStore):
 
     def md5File(self):
         crc = hashlib.md5()
-        fp = open(self.appdata, 'rb')
+        fp = open(self.filename, 'rb')
         for i in fp:
             crc.update(i)
         fp.close()
@@ -79,5 +79,5 @@ class Bookmarks(gtk.ListStore):
                 else:
                     val = data[opt]
                 config.set(row[0], opt, val)
-        with open(self.appdata, 'wb') as configfile:
+        with open(self.filename, 'wb') as configfile:
             config.write(configfile)

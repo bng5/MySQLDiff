@@ -177,10 +177,6 @@ class MainWindow:
         if self.data.maximized:
             self.window.maximize()
 
-        self.window.connect('destroy', self.mainQuit)
-        self.window.connect('window-state-event', self.on_window_state_event)
-
-        self.window.connect('destroy', self.mainQuit)
         self.window.show_all()
 
         self.side = {}

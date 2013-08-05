@@ -1,9 +1,16 @@
 
 import gtk
 
-class PreferencesDialog:
+class PreferencesDialog(gtk.Dialog):
 
     def __init__(self):
+        
+        super(PreferencesDialog, self).__init__('Preferencias',
+                     None,
+                     0,
+                     (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                      gtk.STOCK_APPLY, gtk.RESPONSE_ACCEPT))
+        return
         self.builder = gtk.Builder()
         
         self.builder.add_from_file("glade/preferences_dialog.ui")
@@ -15,5 +22,3 @@ class PreferencesDialog:
         #self.window.show_all()
         #dialog.run()
         #dialog.hide()
-
-    

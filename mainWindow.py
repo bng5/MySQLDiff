@@ -30,7 +30,6 @@ from persistence import *
 
 import Presenter
 
-from windows import ConnectDialog
 
 ## Para el Ping
 ## Non blocking Popen
@@ -134,10 +133,6 @@ t.start()
 """
 
 
-
-
-
-#class MainWindow(gtk.Window):
 class MainWindow(gtk.Window):
 
     ## Colores
@@ -321,7 +316,7 @@ class MainWindow(gtk.Window):
     def collapse_row(self, widget, iter, path, other_side):
         other_side['tables_tree'].collapse_row(path)
 
-    def persist(self):
+    def _persist(self):
         self.data.write()
 
     def toggled_menu_item(self, widget, conn):
@@ -506,77 +501,6 @@ class MainWindow(gtk.Window):
             row = r.fetch_row()
             i = i + 1
 
-    def readline(self, process, view):
-        if process:
-            if process.poll() is None:
-                #process.stdin.write('%d\n' % i)
-                r = self.ping.stdout.readline()#.rstrip()
-                print r
-                buffer = view.get_buffer()
-                iter = buffer.get_end_iter()
-                buffer.insert(iter, r)
-                view.scroll_to_iter(iter, 0.4, False)
-                gobject.timeout_add_seconds(1, self.readline, process, view)
-            else:
-                print self.ping.stdout.read()
-
-    def ping_host_twisted(self, widget, host, dialog):
-        from twisted.internet import protocol, reactor
-
-        class MyProcessProtocol(protocol.ProcessProtocol):
-
-            def connectionMade(self):
-                print "connectionMade!"
-                self.transport.closeStdin()
-
-            def outReceived(self, data):
-                print data
-
-            def processEnded(self, reason):
-                print "processEnded, status %d" % (reason.value.exitCode,)
-                print "quitting"
-                reactor.stop()
-
-        proc = MyProcessProtocol()
-        reactor.spawnProcess(proc, 'ping', ['ping', '-c', '15', host])
-        reactor.run()
-
-    def ping_host_vte(self, widget, host, dialog):
-        import vte
-        v = vte.Terminal()
-        dir(v)
-        v.connect("child-exited", lambda term: gtk.main_quit())
-        v.fork_command()
-        dialog.vbox.pack_end(v)
-        v.show()
-        v.feed_child('ping '+host+'\n')
-
-
-    def ping_host0(self, widget, host):
-        #if self.ping:
-        if widget.get_active() == False:
-            print 'KILL'
-            self.ping.kill()
-            print self.ping.stdout.readline()
-            self.ping = None
-            widget.set_label('_Ping Host')
-            return
-
-        widget.set_label('Stop _Ping')
-        self.ping = subprocess.Popen(
-            ["ping", #"-c", "10",
-            host],
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE
-        )
-        #out, error = ping.communicate()
-        while self.ping.poll() is None:
-            #process.stdin.write('%d\n' % i)
-            print self.ping.stdout.readline().rstrip()
-        #print out
-        #print error
-        #return out
-
     def clean_tree_side(self, tables, side):
 
         t = 0
@@ -648,6 +572,14 @@ class MainWindow(gtk.Window):
         menubar.show()
         return menubar
 
+    def connection_status_change(self, conn):
+        if conn.is_connected():
+            self.conn_button[conn.side].child.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_BUTTON)
+            self.conn_label[conn.side].set_text("%s@%s" % (conn.username, conn.host))
+        else:
+            self.conn_button[conn.side].child.set_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_BUTTON)
+            self.conn_label[conn.side].set_text('Not connected')
+            
     def create_main_area(self):
 
         alignment = gtk.Alignment(0.0, 0.0, 1.0, 1.0)
@@ -655,29 +587,32 @@ class MainWindow(gtk.Window):
 
         alignment.add(vbox)
 
+        self.conn_label = {}
+        self.conn_button = {}
+
         alignment2 = gtk.Alignment(0.0, 0.0, 1.0, 1.0)
         table = gtk.Table(2, 3)
         cell1 = gtk.HBox()
-        label1 = gtk.Label('Not connected')
-        cell1.pack_start(label1, False, False, 6)
-        connect1 = gtk.Button()
+        self.conn_label[constants.LSIDE] = gtk.Label('Not connected')
+        cell1.pack_start(self.conn_label[constants.LSIDE], False, False, 6)
+        self.conn_button[constants.LSIDE] = gtk.Button()
         image1 = gtk.Image()
         image1.set_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_BUTTON)
-        connect1.add(image1)
-        connect1.connect('clicked', self.toggleConnection, self.connections[self.LSIDE])
+        self.conn_button[constants.LSIDE].add(image1)
+        self.conn_button[constants.LSIDE].connect('clicked', self.toggleConnection, self.connections[self.LSIDE])
         #self.side[self.LSIDE]['button'].connect('clicked', self.toggleConnection, self.side[self.LSIDE])
-        cell1.pack_start(connect1, False, True)
+        cell1.pack_start(self.conn_button[constants.LSIDE], False, True)
         table.attach(cell1, 0, 1, 0, 1)
         cell2 = gtk.HBox()
-        label2 = gtk.Label('Not connected')
-        cell2.pack_start(label2, False, False, 6)
-        connect2 = gtk.Button()
+        self.conn_label[constants.RSIDE] = gtk.Label('Not connected')
+        cell2.pack_start(self.conn_label[constants.RSIDE], False, False, 6)
+        self.conn_button[constants.RSIDE] = gtk.Button()
         image2 = gtk.Image()
         image2.set_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_BUTTON)
-        connect2.add(image2)
-        connect2.connect('clicked', self.toggleConnection, self.connections[constants.RSIDE])
+        self.conn_button[constants.RSIDE].add(image2)
+        self.conn_button[constants.RSIDE].connect('clicked', self.toggleConnection, self.connections[constants.RSIDE])
         #self.side[self.RSIDE]['button'].connect('clicked', self.toggleConnection, self.side[self.RSIDE])
-        cell2.pack_start(connect2, False, True)
+        cell2.pack_start(self.conn_button[constants.RSIDE], False, True)
         table.attach(cell2, 2, 3, 0, 1)
         alignment2.add(table)
         vbox.pack_start(alignment2, False, True)

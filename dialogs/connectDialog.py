@@ -124,7 +124,16 @@ class ConnectDialog(gtk.Dialog):
         combo.add_attribute(cell, 'text', 0)
         self.combo_active = combo.get_active()
 
-
+    def get_user_data(self):
+        data = {
+            'username': self.entry['username'].get_text(),
+            'passwd': self.entry['pass'].get_text(),
+            'host': self.entry['host'].get_text(),
+            'port': self.entry['port'].get_value_as_int(),
+            'schema': self.entry['schema'].get_text(),
+        }
+        return data
+        
     def combo_separator(self, model, iter):
         return model.get_value(iter, 2)
 

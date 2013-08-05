@@ -21,8 +21,6 @@ class Presenter:
     def main(self):
         self.userData = persistence.UserData.UserData(self.userDataDir)
         self.userData.load()
-        
-
 
         #bookmarks = Bookmarks.Bookmarks(userDataDir)
         #bookmarks.load()
@@ -60,18 +58,29 @@ class Presenter:
         if conn.is_connected():
             conn.close()
         else:
-            host = 'localhost'
-            try:
-                conn.connect(host, username = 'pablo', passwd = '98970', schema = 'mysql')
-            except Exception, e:
-                dialog = pingDialog.pingDialog(self.window, "Could not connect to host '"+host+"'.\nMySQL Error Nr. %d\n%s\n\nClick the 'Ping' button to see if there is a networking problem." % (e[0], e[1]), host)
-                dialog.run()
-                #self.stop_ping()
-                dialog.stop_ping()
-                dialog.destroy()
-                print 'dialog destroy'
-                #conn['menu_item'].set_active(False)
-                return False
+            connect_dialog = connectDialog.ConnectDialog(self.window)
+            while connect_dialog.run() == gtk.RESPONSE_ACCEPT:
+                conn_data = connect_dialog.get_user_data()
+                try:
+                    conn.connect(host = conn_data['host'], username = conn_data['username'], passwd = conn_data['passwd'])
+                    schemas = conn.get_schemas()
+                    if conn_data['schema'] in schemas:
+                        conn.set_schema(conn_data['schema'])
+                        print conn.get_tables()
+                    break
+                except Exception, e:
+                    print e
+                    dialog = pingDialog.pingDialog(self.window, "Could not connect to host '%s'.\nMySQL Error Nr. %d\n%s\n\nClick the 'Ping' button to see if there is a networking problem." % (conn_data['host'], e[0], e[1]), conn_data['host'])
+                    dialog.run()
+                    dialog.stop_ping()
+                    dialog.destroy()
+                    #conn['menu_item'].set_active(False)
+                    #return False
+            #else:
+            #    pass
+            connect_dialog.destroy()
+        self.window.connection_status_change(conn)
+
         
     def main_delete(self, widget, event, data = None):
         print 'delete-event'
