@@ -1,109 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
-## Para el Ping
-## Non blocking Popen
-#import sys
-#from subprocess import PIPE, Popen
-#from threading  import Thread
-#
-#try:
-#    from Queue import Queue, Empty
-#except ImportError:
-#    from queue import Queue, Empty  # python 3.x
-#
-#ON_POSIX = 'posix' in sys.builtin_module_names
-#
-#def enqueue_output(out, queue):
-#    for line in iter(out.readline, b''):
-#        queue.put(line)
-#    out.close()
-#
-#p = Popen(['myprogram.exe'], stdout=PIPE, bufsize=1, close_fds=ON_POSIX)
-#q = Queue()
-#t = Thread(target=enqueue_output, args=(p.stdout, q))
-#t.daemon = True # thread dies with the program
-#t.start()
-#
-## ... do other things here
-#
-## read line without blocking
-#try:  line = q.get_nowait() # or q.get(timeout=.1)
-#except Empty:
-#    print('no output yet')
-#else: # got line
-#    # ... do something with line
-
-
-
-"""
-# Probado
-# Para el Ping
-# Non blocking Popen
-import sys
-from threading  import Thread, Timer
-
-try:
-    from Queue import Queue, Empty
-except ImportError:
-    from queue import Queue, Empty  # python 3.x
-
-ON_POSIX = 'posix' in sys.builtin_module_names
-
-def enqueue_output(out, err, queue):
-    print 'enqueue_output'
-    for line in iter(out.readline, b''):
-        queue.put(line)
-    out.close()
-
-#ping', '-c', '10', 'google.com
-#/home/pablo/php/recibe
-#p = Popen(['ping', '-c', '10', 'google.com'], stdout=PIPE, stderr=PIPE, bufsize=1, close_fds=ON_POSIX)
-#q = Queue()
-#t = Thread(target=enqueue_output, args=(p.stdout, p.stderr, q))
-#t.daemon = True # thread dies with the program
-#t.start()
-
-
-
-
-def hello():
-
-    if ping.poll() is None:
-        #process.stdin.write('%d\n' % i)
-        print ping.stdout.readline().rstrip()
-        t = Timer(.7, hello)
-        t.start()
-    else:
-        print ping.stdout.read()
-    return
-    # read line without blocking
-    try:
-        line = q.get_nowait() # or q.get(timeout=.1)
-    except Empty:
-        print('--> no output yet')
-    else: # got line
-        print '--> '+line.rstrip()
-    t = Timer(.5, hello)
-    t.start()
-
-
-ping = Popen(
-    ["ping",
-    "-c", "6",
-    'google.com'],
-    stdout = PIPE,
-    stderr = PIPE
-)
-#out, error = ping.communicate()
-
-t = Timer(.5, hello)
-t.start()
-
-"""
-
-
 import gtk
 import glib
 import sys
@@ -121,12 +18,6 @@ import gobject
 #import persistence
 from persistence import *
 
-
-
-# para ping
-#import subprocess
-from subprocess import PIPE, Popen
-#from threading import Timer
 
 import Presenter
 
